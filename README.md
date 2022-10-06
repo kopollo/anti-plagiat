@@ -1,10 +1,23 @@
-﻿# anti-plagiat
+# Anti-plagiat
 
-1) Пользователь загружает текст из файлов или в окошке, а мы сравниваем и составляем небольшой отчёт о проверке. 
- 
-2) Добавляем виджет где храниться история прошлых проверок , чтобы можно было вернуться, загрузить результаты и просмотреть их, также храним дату и время запроса, процент схожести. (БД)
- 
-3)Возможость настройки внешнего вида приложения(темная/светлая тема, шрифт, размер шрифта).
+ ## Features
+- User can upload text from file
+- Saving result of compare in database
+  - similarity percentage 
+  - datetime
+- Upload compare from main menu
+- Suppors custom appearance
+  - font
+  - font size
+  - dark/light theme
+- different algorithms to compare texts
+  - by levenshtein distance
+  - coming soon...
 
-4)Два варианта выбора алгоритма сравнения текста . 1-ый простое посимвольное сравнение , 2-ой - получить лексемы языка и по ним найти расстояние Левенштейна.
-![image](https://user-images.githubusercontent.com/114457052/192997680-e47917d7-dea2-46db-a500-f0c1e4a04ace.png)
+ ## Dependencies
+ - PyQt5
+ - pyqt5-tools
+ - PyQt5-stubs
+
+ ## Interface
+![image](https://user-images.githubusercontent.com/114457052/194416675-5cb1acde-3539-4a80-a367-d2f2f552ffd0.png)
