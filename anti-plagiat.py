@@ -1,12 +1,13 @@
 import sys
 
+from custom_widgets import SettingsWidget
+
 from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout,
     QFileDialog, QLineEdit, QDialog, QPushButton, QWidget, QTextEdit,
-    QFontDialog, QFontComboBox
+    QFontDialog, QFontComboBox, QDialogButtonBox
 )
-from PyQt5.QtCore import Qt
 
 
 class Antiplagiat(QMainWindow):
@@ -22,16 +23,21 @@ class Antiplagiat(QMainWindow):
         uic.loadUi('style/main_widget.ui', self)
         self.setWindowTitle("Antiplagiat")
 
-        self.setStyleSheet(open('style/dark_theme.css').read())
-
         self.settings_btn.clicked.connect(self.click_on_settings_btn)
         self.history_btn.clicked.connect(self.click_on_history_btn)
         self.compare_text_btn.clicked.connect(self.click_on_compare_btn)
         self.save_result_btn.clicked.connect(self.click_on_save_result_btn)
 
         self.settings_window = SettingsWidget()
+        self.set_dark_theme()
 
+    def set_dark_theme(self):
         self.settings_window.setStyleSheet(open('style/dark_theme.css').read())
+        self.setStyleSheet(open('style/dark_theme.css').read())
+
+    def set_light_theme(self):
+        self.settings_window.setStyleSheet(open('style/light_theme.css').read())
+        self.setStyleSheet(open('style/light_theme.css').read())
 
     def click_on_history_btn(self):
         """
@@ -62,21 +68,6 @@ class Antiplagiat(QMainWindow):
         :param text2: second text
         :return: levenshtein distance
         """
-
-
-class SettingsWidget(QWidget):
-    """
-    widget that provides settings options
-    - font
-    - font size
-    - theme
-    """
-
-    def __init__(self):
-        super().__init__()
-        uic.loadUi('style/settings_widget.ui', self)
-        self.setWindowTitle("Settings")
-        self.setWindowModality(Qt.ApplicationModal)
 
 
 if __name__ == '__main__':

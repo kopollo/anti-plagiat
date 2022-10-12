@@ -1,0 +1,5 @@
+"selection-background-color:green;"
+self.setFont(QtGui.QFont("Times", 8))
+
+
+

@@ -1,10 +1,13 @@
 ﻿"""
 file that contains custom widgets
 """
+from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import (
-    QFileDialog, QLineEdit, QDialog, QPushButton, QWidget, QPlainTextEdit,
-    QVBoxLayout
+    QApplication, QMainWindow, QVBoxLayout,
+    QFileDialog, QLineEdit, QDialog, QPushButton, QWidget, QTextEdit,
+    QFontDialog, QFontComboBox, QDialogButtonBox, QPlainTextEdit
 )
+from PyQt5.QtCore import Qt
 
 
 class DisplayTextWidget(QWidget):
@@ -41,3 +44,21 @@ class DisplayTextWidget(QWidget):
         except FileNotFoundError:
             # maybe should save that info
             pass
+
+
+class SettingsWidget(QWidget):
+    """
+    widget that provides settings options
+    - font
+    - font size
+    - theme
+    """
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('style/settings_widget.ui', self)
+        self.setWindowTitle("Settings")
+        self.setWindowModality(Qt.ApplicationModal)
+        self.buttonBox.clicked.connect(self.on_click)
+
+    def on_click(self):
+        print('x')
