@@ -1,0 +1,6 @@
+# created by virtualenv automatically
+venv/Lib
+.idea
+__pycache__
+notes.txt
+
