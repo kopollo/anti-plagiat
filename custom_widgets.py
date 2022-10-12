@@ -11,6 +11,7 @@ class DisplayTextWidget(QWidget):
     """
     Widget that allows to add text from file and to see that text
     """
+
     def __init__(self, parent):
         """
         Initialize DisplayTextWidget widget
@@ -22,6 +23,7 @@ class DisplayTextWidget(QWidget):
         self.open_file_dialog_btn.clicked.connect(self.get_file)
 
         self.text = QPlainTextEdit(self)
+        self.text.setStyleSheet("background-color: #2F3136;")
 
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.open_file_dialog_btn)
