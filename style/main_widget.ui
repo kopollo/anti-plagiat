@@ -84,10 +84,10 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="DisplayTextWidget" name="widget" native="true"/>
+      <widget class="DisplayTextWidget" name="first_compared_text" native="true"/>
      </item>
      <item>
-      <widget class="DisplayTextWidget" name="widget_2" native="true"/>
+      <widget class="DisplayTextWidget" name="second_compared_text" native="true"/>
      </item>
     </layout>
    </widget>

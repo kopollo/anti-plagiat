@@ -1,5 +1,7 @@
 QWidget {
     color: white;
     background-color: #36393E;
-    font: 8pt bold;
+}
+QPlainTextEdit {
+    background-color: #2F3136;;
 }

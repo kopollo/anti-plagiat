@@ -1,15 +1,13 @@
 ﻿"""
 file that contains custom widgets
 """
-from PyQt5 import uic, QtGui
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout,
-    QFileDialog, QLineEdit, QDialog, QPushButton, QWidget, QTextEdit,
-    QFontDialog, QFontComboBox, QDialogButtonBox, QPlainTextEdit
-)
+from PyQt5 import uic, QtGui, QtWidgets, QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 
 
+# from settings_widget import settings_widget
 class DisplayTextWidget(QWidget):
     """
     Widget that allows to add text from file and to see that text
@@ -26,7 +24,6 @@ class DisplayTextWidget(QWidget):
         self.open_file_dialog_btn.clicked.connect(self.get_file)
 
         self.text = QPlainTextEdit(self)
-        self.text.setStyleSheet("background-color: #2F3136;")
 
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.open_file_dialog_btn)
@@ -46,19 +43,31 @@ class DisplayTextWidget(QWidget):
             pass
 
 
-class SettingsWidget(QWidget):
+class SettingsWidget(QDialog):
+    DEFAULT_FONT_SIZE = 8
     """
     widget that provides settings options
     - font
     - font size
     - theme
     """
-    def __init__(self):
-        super().__init__()
+
+    def __init__(self, parent):
+        QDialog.__init__(self, parent=parent)
         uic.loadUi('style/settings_widget.ui', self)
         self.setWindowTitle("Settings")
-        self.setWindowModality(Qt.ApplicationModal)
+        self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.clicked.connect(self.on_click)
 
+        self.font = self.font_dialog.currentText()
+        self.font_size = SettingsWidget.DEFAULT_FONT_SIZE
+        self.theme = self.theme_group.checkedButton().objectName()
+
+    def accept(self):
+        self.font = self.font_dialog.currentText()
+        self.font_size = int(self.font_size_spin_box.text())
+        self.theme = self.theme_group.checkedButton().objectName()
+
     def on_click(self):
-        print('x')
+        # print(self.font, self.font_size)
+        self.close()

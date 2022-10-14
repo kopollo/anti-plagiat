@@ -17,14 +17,14 @@
    <property name="geometry">
     <rect>
      <x>270</x>
-     <y>20</y>
+     <y>10</y>
      <width>101</width>
      <height>81</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="theme_label">
       <property name="text">
        <string>Choose theme </string>
       </property>
@@ -34,20 +34,26 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_2">
+     <widget class="QRadioButton" name="light">
       <property name="text">
        <string>Light theme</string>
       </property>
       <property name="checked">
        <bool>true</bool>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">theme_group</string>
+      </attribute>
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton">
+     <widget class="QRadioButton" name="dark">
       <property name="text">
        <string>Dark theme</string>
       </property>
+      <attribute name="buttonGroup">
+       <string notr="true">theme_group</string>
+      </attribute>
      </widget>
     </item>
    </layout>
@@ -79,7 +85,7 @@
      <number>11</number>
     </property>
     <item>
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="font_label">
       <property name="text">
        <string>Сhoose font</string>
       </property>
@@ -89,14 +95,14 @@
      </widget>
     </item>
     <item>
-     <widget class="QFontComboBox" name="fontComboBox"/>
+     <widget class="QFontComboBox" name="font_dialog"/>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="font_size_label">
         <property name="text">
-         <string>   Bold size :</string>
+         <string>   Font size :</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -110,7 +116,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBox">
+       <widget class="QSpinBox" name="font_size_spin_box">
         <property name="minimum">
          <number>8</number>
         </property>
@@ -126,4 +132,7 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="theme_group"/>
+ </buttongroups>
 </ui>

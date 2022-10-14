@@ -1,6 +1,8 @@
 import sys
 
-from custom_widgets import SettingsWidget
+from PyQt5.QtGui import QFont
+
+from custom_widgets import *
 
 from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import (
@@ -28,15 +30,12 @@ class Antiplagiat(QMainWindow):
         self.compare_text_btn.clicked.connect(self.click_on_compare_btn)
         self.save_result_btn.clicked.connect(self.click_on_save_result_btn)
 
-        self.settings_window = SettingsWidget()
-        self.set_dark_theme()
+        self.settings_window = SettingsWidget(self)
 
     def set_dark_theme(self):
-        self.settings_window.setStyleSheet(open('style/dark_theme.css').read())
         self.setStyleSheet(open('style/dark_theme.css').read())
 
     def set_light_theme(self):
-        self.settings_window.setStyleSheet(open('style/light_theme.css').read())
         self.setStyleSheet(open('style/light_theme.css').read())
 
     def click_on_history_btn(self):
@@ -48,7 +47,15 @@ class Antiplagiat(QMainWindow):
         """
         open a new window with settings dialog
         """
-        self.settings_window.show()
+        self.settings_window.exec()
+        my_font = QFont(self.settings_window.font,
+                        self.settings_window.font_size)
+        self.setStyleSheet("")
+        self.setFont(my_font)
+        if self.settings_window.theme == "light":
+            self.set_light_theme()
+        if self.settings_window.theme == "dark":
+            self.set_dark_theme()
 
     def click_on_compare_btn(self):
         """
