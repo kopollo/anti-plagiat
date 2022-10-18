@@ -7,11 +7,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 
 
-# from settings_widget import settings_widget
 class DisplayTextWidget(QWidget):
     """
     Widget that allows to add text from file and to see that text
     """
+    DEFAULT_TAB_SIZE = 4
 
     def __init__(self, parent):
         """
@@ -23,11 +23,20 @@ class DisplayTextWidget(QWidget):
         self.open_file_dialog_btn = QPushButton('Add text from file', self)
         self.open_file_dialog_btn.clicked.connect(self.get_file)
 
-        self.text = QPlainTextEdit(self)
+        self.text_widget = QPlainTextEdit(self)
+        self.text_widget.textChanged.connect(self.text_changed)
+        self.text_widget.setTabStopWidth(
+            self.text_widget.fontMetrics().width(' ')
+            * DisplayTextWidget.DEFAULT_TAB_SIZE
+        )
+        self.text = self.text_widget.toPlainText()
 
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.open_file_dialog_btn)
-        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.text_widget)
+
+    def text_changed(self):
+        self.text = self.text_widget.toPlainText()
 
     def get_file(self):
         """
@@ -37,37 +46,40 @@ class DisplayTextWidget(QWidget):
             file = QFileDialog.getOpenFileName(self, 'Open file')
             file_path, file_type = file
             text = open(file_path).read()
-            self.text.setPlainText(text)
+            self.text_widget.setPlainText(text)
+            self.text = self.text_widget.toPlainText()
         except FileNotFoundError:
             # maybe should save that info
             pass
 
 
 class SettingsWidget(QDialog):
-    DEFAULT_FONT_SIZE = 8
     """
     widget that provides settings options
     - font
     - font size
     - theme
     """
+    DEFAULT_FONT_SIZE = 11
 
     def __init__(self, parent):
+        """
+        Initialize Settings window of Antiplagiat, base font, font size, theme
+        :param parent: widget that promotes settings
+        """
         QDialog.__init__(self, parent=parent)
         uic.loadUi('style/settings_widget.ui', self)
         self.setWindowTitle("Settings")
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.clicked.connect(self.on_click)
+
+        self.buttonBox.accepted.connect(self.click_accept)
+        self.buttonBox.rejected.connect(self.reject)
 
         self.font = self.font_dialog.currentText()
         self.font_size = SettingsWidget.DEFAULT_FONT_SIZE
         self.theme = self.theme_group.checkedButton().objectName()
 
-    def accept(self):
+    def click_accept(self):
         self.font = self.font_dialog.currentText()
         self.font_size = int(self.font_size_spin_box.text())
         self.theme = self.theme_group.checkedButton().objectName()
-
-    def on_click(self):
-        # print(self.font, self.font_size)
         self.close()

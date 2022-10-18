@@ -1,15 +1,12 @@
 import sys
 
-from PyQt5.QtGui import QFont
-
-from custom_widgets import *
-
 from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout,
-    QFileDialog, QLineEdit, QDialog, QPushButton, QWidget, QTextEdit,
-    QFontDialog, QFontComboBox, QDialogButtonBox
 )
+
+from custom_widgets import *
+from algo import *
 
 
 class Antiplagiat(QMainWindow):
@@ -32,11 +29,16 @@ class Antiplagiat(QMainWindow):
 
         self.settings_window = SettingsWidget(self)
 
-    def set_dark_theme(self):
-        self.setStyleSheet(open('style/dark_theme.css').read())
+    def set_style(self, theme_file_name):
+        """
+        sets theme from css file
+        """
+        font_size = self.settings_window.font_size
+        font = self.settings_window.font
+        font_in_css = f'font-size: {font_size}px; font-family: {font};'
+        cur_font = f"QWidget {{{font_in_css}}}"
 
-    def set_light_theme(self):
-        self.setStyleSheet(open('style/light_theme.css').read())
+        self.setStyleSheet(open(theme_file_name).read() + cur_font)
 
     def click_on_history_btn(self):
         """
@@ -48,32 +50,29 @@ class Antiplagiat(QMainWindow):
         open a new window with settings dialog
         """
         self.settings_window.exec()
-        my_font = QFont(self.settings_window.font,
-                        self.settings_window.font_size)
-        self.setStyleSheet("")
-        self.setFont(my_font)
-        if self.settings_window.theme == "light":
-            self.set_light_theme()
+        # self.setStyleSheet("")
+        # self.setFont(my_font)
+        theme_file_name = "style/light_theme.css"
         if self.settings_window.theme == "dark":
-            self.set_dark_theme()
+            theme_file_name = "style/dark_theme.css"
+
+        self.set_style(theme_file_name)
 
     def click_on_compare_btn(self):
         """
         call a compare function after click
         """
 
+        diff = get_diff_percent(
+            self.first_compared_text.text,
+            self.second_compared_text.text
+        )
+        self.result_label.setText(str(diff))
+
     def click_on_save_result_btn(self):
         """
         saves current compare attributes
         (equality percent, request time) to database
-        """
-
-    def levenshtein_distance(self, text1, text2):
-        """
-        finds levenshtein distance of two texts
-        :param text1: first text
-        :param text2: second text
-        :return: levenshtein distance
         """
 
 
