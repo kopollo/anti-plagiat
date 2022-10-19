@@ -1,3 +1,4 @@
 PyQt5
 pyqt5-tools
 PyQt5-stubs
+pytest

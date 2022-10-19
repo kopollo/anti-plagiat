@@ -32,7 +32,7 @@ def levenstein_distance(first_sequence, second_sequence):
 
 def get_tokens(source_code):
     """
-    generates tokens based on text
+    generates tokens based on source code
     :param source_code: code of program
     :return: list of tokens in numeric view
     """
@@ -40,8 +40,8 @@ def get_tokens(source_code):
     tokens = []
     rl = StringIO(lines).readline
     try:
-        for t_type, t_str, (br, bc), (er, ec), logl in tokenize.generate_tokens(
-                rl):
+        for t_type, t_str, (br, bc), (er, ec), logl in (
+                tokenize.generate_tokens(rl)):
             tokens.append(t_type)
     except tokenize.TokenError:
         pass
