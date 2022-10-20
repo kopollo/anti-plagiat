@@ -5,3 +5,7 @@ QWidget {
 QPlainTextEdit {
     background-color: #2F3136;;
 }
+
+QHeaderView::section{
+    Background-color: #36393E;
+}

@@ -1,5 +1,5 @@
 import sys
-
+from datetime import datetime
 from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout,
@@ -29,6 +29,11 @@ class Antiplagiat(QMainWindow):
 
         self.settings_window = SettingsWidget(self)
 
+        self.history = HistoryWidget(self)
+
+        theme_file_name = "style/dark_theme.css"
+        self.set_style(theme_file_name)
+
     def set_style(self, theme_file_name):
         """
         sets theme from css file
@@ -44,14 +49,13 @@ class Antiplagiat(QMainWindow):
         """
         open a new window with history of requests
         """
+        self.history.exec()
 
     def click_on_settings_btn(self):
         """
         open a new window with settings dialog
         """
         self.settings_window.exec()
-        # self.setStyleSheet("")
-        # self.setFont(my_font)
         theme_file_name = "style/light_theme.css"
         if self.settings_window.theme == "dark":
             theme_file_name = "style/dark_theme.css"
@@ -73,7 +77,18 @@ class Antiplagiat(QMainWindow):
         """
         saves current compare attributes
         (equality percent, request time) to database
+        and user local storage
         """
+        # if (not self.first_compared_text.text and
+        #         not self.second_compared_text.text):
+        #     pass
+
+        txt1 = self.first_compared_text.text  # RENAME RENAME
+        txt2 = self.second_compared_text.text
+        percent = self.result_label.text()
+        date = datetime.now().strftime('%Y-%m-%d - %H:%M:%S')
+        item = UserComparisonItem(txt1, txt2, percent, date, self)
+        self.history.add_item_to_list(item)
 
 
 if __name__ == '__main__':

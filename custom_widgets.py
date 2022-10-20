@@ -1,10 +1,12 @@
 ﻿"""
 file that contains custom widgets
 """
+import csv
+
 from PyQt5 import uic, QtGui, QtWidgets, QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 
 
 class DisplayTextWidget(QWidget):
@@ -79,7 +81,45 @@ class SettingsWidget(QDialog):
         self.theme = self.theme_group.checkedButton().objectName()
 
     def click_accept(self):
+        """
+        changes font, font-size, theme
+        """
         self.font = self.font_dialog.currentText()
         self.font_size = int(self.font_size_spin_box.text())
         self.theme = self.theme_group.checkedButton().objectName()
         self.close()
+
+
+class HistoryWidget(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        uic.loadUi('style/user_history_widget.ui', self)
+        self.listWidget.itemDoubleClicked.connect(self.reproduce_compare)
+
+    def add_item_to_list(self, item):
+        list_item = QListWidgetItem(self.listWidget)
+        list_item.setSizeHint(QSize(200, 70))
+        self.listWidget.addItem(list_item)
+        self.listWidget.setItemWidget(list_item, item)
+
+    def reproduce_compare(self):
+        # for ch in self.listWidget.currentItem.listWidget().children():
+        #     pass
+        # print()
+        # item = self.listWidget.currentItem()
+        # QListWidgetItem.
+        # print(item.listWidget())
+        # print(self.parent().first_compared_text.setPlain)
+        self.close()
+
+
+class UserComparisonItem(QWidget):
+    def __init__(self, txt, txt2, percent, datetime, parent=None):
+        super().__init__(parent)
+        uic.loadUi('style/user_comparison_widget.ui', self)
+
+        self.first_source_code.setPlainText(txt)
+        self.second_source_code.setPlainText(txt2)
+        self.equality_percent_label.setText(percent)
+        self.date_time_label.setText(datetime)
