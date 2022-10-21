@@ -49,6 +49,11 @@ def get_tokens(source_code):
 
 
 def print_tokens_info(source_code):
+    """
+    print in a formatted way token id, toked name title and
+    the object that called this token
+    :param source_code: source where we want to get tokens info
+    """
     lines = source_code.strip()
     rl = StringIO(lines).readline
     for t_type, t_str, (br, bc), (er, ec), logl in tokenize.generate_tokens(
@@ -62,7 +67,7 @@ def tokens_filer(tokens):
     """
     delete from list COMMENT and NEW LINE tokens
     :param tokens: list of tokens
-    :return: array
+    :return: list without COMMENT and NEW LINE tokens
     """
     bad_tokens_id = [60, 61]  # COMMENT and NEW LINE codes
     tokens = [token_i for token_i in tokens if token_i not in bad_tokens_id]
@@ -70,6 +75,13 @@ def tokens_filer(tokens):
 
 
 def get_diff_percent(source_code1, source_code2):
+    """
+    function gets two source codes and calculate difference percent
+    by this formula (100 - (levenstein_dist * 100) / max_len)
+    :param source_code1: first source code
+    :param source_code2: second source code
+    :return: difference percent%
+    """
     source1_tokens = tokens_filer(get_tokens(source_code1))
     source2_tokens = tokens_filer(get_tokens(source_code2))
 

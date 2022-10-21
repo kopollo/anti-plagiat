@@ -91,19 +91,37 @@ class SettingsWidget(QDialog):
 
 
 class HistoryWidget(QDialog):
+    """
+    Widget which provides user saved compares with the following fields:
+    - first source code
+    - second source code
+    - difference percent
+    - data & time
+    """
     def __init__(self, parent):
+        """
+        Initialize History Widget of Antiplagiat, sets window title
+        :param parent: a widget that needs a history window
+        """
         super().__init__(parent)
-
         uic.loadUi('style/user_history_widget.ui', self)
+        self.setWindowTitle("User Histore")
         self.listWidget.itemDoubleClicked.connect(self.reproduce_compare)
 
     def add_item_to_list(self, item):
+        """
+        appends in list widget item
+        :param item: object that we want to add in list
+        """
         list_item = QListWidgetItem(self.listWidget)
         list_item.setSizeHint(QSize(200, 70))
         self.listWidget.addItem(list_item)
         self.listWidget.setItemWidget(list_item, item)
 
     def reproduce_compare(self):
+        """
+        transfer source codes from list into main window
+        """
         # for ch in self.listWidget.currentItem.listWidget().children():
         #     pass
         # print()
@@ -115,7 +133,22 @@ class HistoryWidget(QDialog):
 
 
 class UserComparisonItem(QWidget):
-    def __init__(self, txt, txt2, percent, datetime, parent=None):
+    """
+    Item which provides following attributes:
+    - first source code
+    - second source code
+    - difference percent
+    - data & time
+    """
+    def __init__(self, txt, txt2, percent, datetime, parent=None): #WILL RENAME
+        """
+        Initialize object with following attributes:
+        :param txt:
+        :param txt2:
+        :param percent:
+        :param datetime:
+        :param parent:
+        """
         super().__init__(parent)
         uic.loadUi('style/user_comparison_widget.ui', self)
 
