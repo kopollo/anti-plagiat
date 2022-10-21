@@ -1,5 +1,5 @@
 # Anti-plagiat
-
+Check similarity of python source codes with convenient user interface
  ## Features
 - Amazing algorithm to compare python code by levenshtein distance
 - Opportunity to upload source code from file
@@ -7,7 +7,7 @@
   - Input Source codes
   - similarity percentage 
   - datetime
-- Upload compare from special user history window
+- Possibility to reproduce compare from database using the interface
 - Suppors custom appearance
   - font
   - font size
