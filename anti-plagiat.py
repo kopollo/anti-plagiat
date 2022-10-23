@@ -1,3 +1,4 @@
+import sqlite3
 import sys
 from datetime import datetime
 from PyQt5 import uic, QtGui
@@ -31,19 +32,20 @@ class Antiplagiat(QMainWindow):
 
         self.history = HistoryWidget(self)
 
-        theme_file_name = "style/dark_theme.css"
-        self.set_style(theme_file_name)
+        self.dbname = "user_comparison_storage.db"
 
-    def set_style(self, theme_file_name):
-        """
-        sets theme from css file
-        """
-        font_size = self.settings_window.font_size
-        font = self.settings_window.font
-        font_in_css = f'font-size: {font_size}px; font-family: {font};'
-        cur_font = f"QWidget {{{font_in_css}}}"
+        self.init_storage_by_db()
 
-        self.setStyleSheet(open(theme_file_name).read() + cur_font)
+    def init_storage_by_db(self):
+        connection = sqlite3.connect(self.dbname)
+        cursor = connection.cursor()
+        query = '''
+            SELECT *
+            FROM comparison
+        '''
+        cursor.execute(query)
+        for row in cursor.fetchall():
+            self.history.add_item_to_list(UserComparisonItem(*row[1:]))
 
     def click_on_history_btn(self):
         """
@@ -56,15 +58,11 @@ class Antiplagiat(QMainWindow):
         open a new window with settings dialog
         """
         self.settings_window.exec()
-        theme_file_name = "style/light_theme.css"
-        if self.settings_window.theme == "dark":
-            theme_file_name = "style/dark_theme.css"
-
-        self.set_style(theme_file_name)
+        self.settings_window.set_style()
 
     def click_on_compare_btn(self):
         """
-        call a compare function after click
+        call a compare function for source codes after click
         """
 
         diff = get_diff_percent(
@@ -76,19 +74,43 @@ class Antiplagiat(QMainWindow):
     def click_on_save_result_btn(self):
         """
         saves current compare attributes
-        (equality percent, request time) to database
+        (source codes, equality percent, request time) to database
         and user local storage
         """
-        # if (not self.first_compared_text.text and
-        #         not self.second_compared_text.text):
-        #     pass
-
-        txt1 = self.first_compared_text.text  # RENAME RENAME
-        txt2 = self.second_compared_text.text
         percent = self.result_label.text()
         date = datetime.now().strftime('%Y-%m-%d - %H:%M:%S')
-        item = UserComparisonItem(txt1, txt2, percent, date, self)
+        item = UserComparisonItem(
+            self.first_compared_text.get_text(),
+            self.second_compared_text.get_text(),
+            percent,
+            date,
+            self)
+
         self.history.add_item_to_list(item)
+        self.add_item_to_db(item)
+
+    def add_item_to_db(self, item: UserComparisonItem):
+        """
+        adds item to database of user compares
+        :param item: what we will insert
+        """
+        first_sc, second_sc, percent, date_time = item.get_comparison_info()
+
+        connection = sqlite3.connect(self.dbname)
+        cursor = connection.cursor()
+        print(type(date_time))
+        query = '''
+        INSERT INTO comparison(
+            first_compared_source,
+            second_compared_source,
+            similarity_percentage,
+            date_time)
+        VALUES(?,?,?,?)
+        '''
+
+        cursor.execute(query, item.get_comparison_info())
+        connection.commit()
+        connection.close()
 
 
 if __name__ == '__main__':

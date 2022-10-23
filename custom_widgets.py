@@ -23,7 +23,7 @@ class DisplayTextWidget(QWidget):
         super(DisplayTextWidget, self).__init__(parent=parent)
 
         self.open_file_dialog_btn = QPushButton('Add text from file', self)
-        self.open_file_dialog_btn.clicked.connect(self.get_file)
+        self.open_file_dialog_btn.clicked.connect(self.get_file_by_dialog)
 
         self.text_widget = QPlainTextEdit(self)
         self.text_widget.textChanged.connect(self.text_changed)
@@ -33,14 +33,29 @@ class DisplayTextWidget(QWidget):
         )
         self.text = self.text_widget.toPlainText()
 
+        self.is_text_changed = True
+
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.open_file_dialog_btn)
         self.layout.addWidget(self.text_widget)
 
     def text_changed(self):
+        self.is_text_changed = True
         self.text = self.text_widget.toPlainText()
 
-    def get_file(self):
+    def get_text(self):
+        """
+        :return: text on QPlainTextEdit
+        """
+        return self.text
+
+    def set_text(self, text):
+        """
+        sets text on QPlainTextEdit
+        """
+        self.text_widget.setPlainText(text)
+
+    def get_file_by_dialog(self):
         """
         open text by file dialog and shows it in text widget
         """
@@ -89,47 +104,19 @@ class SettingsWidget(QDialog):
         self.theme = self.theme_group.checkedButton().objectName()
         self.close()
 
+    def set_style(self):
+        """
+        sets theme from css file
+        """
+        theme_file_name = "style/light_theme.css"
+        if self.theme == "dark":
+            theme_file_name = "style/dark_theme.css"
 
-class HistoryWidget(QDialog):
-    """
-    Widget which provides user saved compares with the following fields:
-    - first source code
-    - second source code
-    - difference percent
-    - data & time
-    """
-    def __init__(self, parent):
-        """
-        Initialize History Widget of Antiplagiat, sets window title
-        :param parent: a widget that needs a history window
-        """
-        super().__init__(parent)
-        uic.loadUi('style/user_history_widget.ui', self)
-        self.setWindowTitle("User Histore")
-        self.listWidget.itemDoubleClicked.connect(self.reproduce_compare)
-
-    def add_item_to_list(self, item):
-        """
-        appends in list widget item
-        :param item: object that we want to add in list
-        """
-        list_item = QListWidgetItem(self.listWidget)
-        list_item.setSizeHint(QSize(200, 70))
-        self.listWidget.addItem(list_item)
-        self.listWidget.setItemWidget(list_item, item)
-
-    def reproduce_compare(self):
-        """
-        transfer source codes from list into main window
-        """
-        # for ch in self.listWidget.currentItem.listWidget().children():
-        #     pass
-        # print()
-        # item = self.listWidget.currentItem()
-        # QListWidgetItem.
-        # print(item.listWidget())
-        # print(self.parent().first_compared_text.setPlain)
-        self.close()
+        font_size = self.font_size
+        font = self.font
+        font_in_qss = f'font-size: {font_size}px; font-family: {font};'
+        cur_font = f"QWidget {{{font_in_qss}}}"
+        self.parent().setStyleSheet(open(theme_file_name).read() + cur_font)
 
 
 class UserComparisonItem(QWidget):
@@ -140,7 +127,9 @@ class UserComparisonItem(QWidget):
     - difference percent
     - data & time
     """
-    def __init__(self, txt, txt2, percent, datetime, parent=None): #WILL RENAME
+
+    def __init__(self, txt, txt2, percent, datetime,
+                 parent=None):  # сдлать **kwargs
         """
         Initialize object with following attributes:
         :param txt:
@@ -154,5 +143,71 @@ class UserComparisonItem(QWidget):
 
         self.first_source_code.setPlainText(txt)
         self.second_source_code.setPlainText(txt2)
-        self.equality_percent_label.setText(percent)
+        self.equality_percent_label.setText(str(percent))
         self.date_time_label.setText(datetime)
+
+    def get_comparison_info(self):
+        """
+        gets a tuple of attributes of UserComparisonItem
+        :return: tuple
+        """
+        return (
+            self.first_source_code.toPlainText(),
+            self.second_source_code.toPlainText(),
+            self.equality_percent_label.text(),
+            self.date_time_label.text(),
+        )
+
+
+class HistoryWidget(QDialog):
+    """
+    Widget which provides user saved compares with the following fields:
+    - first source code
+    - second source code
+    - difference percent
+    - data & time
+    """
+    LIST_ITEM_SIZE = (200, 70)
+
+    def __init__(self, parent):
+        """
+        Initialize History Widget of Antiplagiat, sets window title
+        :param parent: a widget that needs a history window
+        """
+        super().__init__(parent)
+        uic.loadUi('style/user_history_widget.ui', self)
+        self.setWindowTitle("User Histore")
+        self.listWidget.itemDoubleClicked.connect(self.reproduce_compare)
+
+    def add_item_to_list(self, item: UserComparisonItem):
+        """
+        appends in list widget item
+        :param item: object that we want to add in list
+        """
+        list_item = QListWidgetItem(self.listWidget)
+        list_item.setSizeHint(QSize(*HistoryWidget.LIST_ITEM_SIZE))
+        self.listWidget.addItem(list_item)
+        self.listWidget.setItemWidget(list_item, item)
+
+    def get_list_item(self):
+        """
+        allows us to take widget from QListWidget
+        :return: widget
+        """
+        item = self.listWidget.currentItem()
+        widget = self.listWidget.itemWidget(item)
+        return widget
+
+    def reproduce_compare(self):
+        """
+        transfer source codes from list into main window
+        """
+        widget = self.get_list_item()
+
+        txt1, txt2, percent, datetime = widget.get_comparison_info()
+
+        self.parent().first_compared_text.set_text(txt1)
+        self.parent().second_compared_text.set_text(txt2)
+
+        self.close()
+
