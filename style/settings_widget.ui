@@ -95,7 +95,11 @@
      </widget>
     </item>
     <item>
-     <widget class="QFontComboBox" name="font_dialog"/>
+     <widget class="QFontComboBox" name="font_dialog">
+      <property name="currentText">
+       <string>Times</string>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">

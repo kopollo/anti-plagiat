@@ -77,7 +77,9 @@ class SettingsWidget(QDialog):
     - font size
     - theme
     """
+    DEFAULT_FONT = "Times"
     DEFAULT_FONT_SIZE = 11
+    DEFAULT_THEME = "light"
 
     def __init__(self, parent):
         """
@@ -91,9 +93,25 @@ class SettingsWidget(QDialog):
         self.buttonBox.accepted.connect(self.click_accept)
         self.buttonBox.rejected.connect(self.reject)
 
-        self.font = self.font_dialog.currentText()
-        self.font_size = SettingsWidget.DEFAULT_FONT_SIZE
-        self.theme = self.theme_group.checkedButton().objectName()
+        self.font = SettingsWidget.DEFAULT_FONT
+        self.font_size = SettingsWidget.DEFAULT_FONT
+        self.theme = SettingsWidget.DEFAULT_THEME
+
+        self.init_user_settings()
+
+    def init_user_settings(self):
+        with open("user_settings_info.txt") as fin:
+            lines = fin.readlines()
+        lines = tuple([line.strip() for line in lines])
+
+        self.font, self.font_size, self.theme = lines
+        self.set_style()
+
+    def save_user_settings(self):
+        with open("user_settings_info.txt", mode="w") as out:
+            print(self.font, file=out)
+            print(self.font_size, file=out)
+            print(self.theme, file=out)
 
     def click_accept(self):
         """
@@ -102,6 +120,8 @@ class SettingsWidget(QDialog):
         self.font = self.font_dialog.currentText()
         self.font_size = int(self.font_size_spin_box.text())
         self.theme = self.theme_group.checkedButton().objectName()
+
+        self.set_style()
         self.close()
 
     def set_style(self):
@@ -112,11 +132,13 @@ class SettingsWidget(QDialog):
         if self.theme == "dark":
             theme_file_name = "style/dark_theme.css"
 
-        font_size = self.font_size
+        font_size = int(self.font_size)
         font = self.font
         font_in_qss = f'font-size: {font_size}px; font-family: {font};'
         cur_font = f"QWidget {{{font_in_qss}}}"
         self.parent().setStyleSheet(open(theme_file_name).read() + cur_font)
+
+        self.save_user_settings()
 
 
 class UserComparisonItem(QWidget):
@@ -210,4 +232,3 @@ class HistoryWidget(QDialog):
         self.parent().second_compared_text.set_text(txt2)
 
         self.close()
-

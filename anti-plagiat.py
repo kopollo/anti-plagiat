@@ -58,7 +58,7 @@ class Antiplagiat(QMainWindow):
         open a new window with settings dialog
         """
         self.settings_window.exec()
-        self.settings_window.set_style()
+        # self.settings_window.set_style()
 
     def click_on_compare_btn(self):
         """
