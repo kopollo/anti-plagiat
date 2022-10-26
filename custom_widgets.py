@@ -1,7 +1,7 @@
 ﻿"""
 file that contains custom widgets
 """
-from PyQt5 import uic, QtGui, QtWidgets, QtCore
+from PyQt5 import uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QSize
 

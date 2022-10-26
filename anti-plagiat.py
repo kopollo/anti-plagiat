@@ -28,13 +28,21 @@ class Antiplagiat(QMainWindow):
         self.compare_text_btn.clicked.connect(self.click_on_compare_btn)
         self.save_result_btn.clicked.connect(self.click_on_save_result_btn)
 
-        self.user_forget_label.setHidden(True)
-
         self.settings_window = SettingsWidget(self)
         self.history = HistoryWidget(self)
 
         self.db_of_compares = UserComparisonStorageDB()
         self.init_storage_by_db()
+
+        self.show_user_warning(False)
+        self.was_compare_btn_clicked = False
+
+    def show_user_warning(self, ok: bool):
+        """
+        shows to user warning, if he forgot to click compare btn
+        :param ok: should we hide it or show
+        """
+        self.user_forget_label.setHidden(not ok)
 
     def click_on_history_btn(self):
         """
@@ -52,6 +60,8 @@ class Antiplagiat(QMainWindow):
         """
         call a compare function for source codes after click
         """
+        self.show_user_warning(False)
+        self.user_click_manager(self.click_on_compare_btn)
 
         diff = get_diff_percent(
             self.first_compared_text.get_text(),
@@ -82,12 +92,29 @@ class Antiplagiat(QMainWindow):
         """
         return datetime.now().strftime('%Y-%m-%d - %H:%M:%S')
 
+    def user_click_manager(self, func_of_click):
+        """
+        implements a simple logger to control user
+        :param func_of_click: function what was clicked
+        """
+        if func_of_click == self.click_on_compare_btn:
+            self.was_compare_btn_clicked = True
+        elif func_of_click == self.click_on_save_result_btn:
+            self.was_compare_btn_clicked = False
+        else:
+            pass
+
     def click_on_save_result_btn(self):
         """
         saves current compare attributes
         (source codes, equality percent, request time) to database
         and user local storage
         """
+
+        if not self.was_compare_btn_clicked:
+            self.show_user_warning(True)
+            return False
+
         percent = self.result_label.text()
         date = self.generate_formatted_datetime()
         item = UserComparisonItem(
@@ -102,6 +129,8 @@ class Antiplagiat(QMainWindow):
 
         if self.db_of_compares.is_too_long_queue():
             self.reload_db()
+
+        self.user_click_manager(self.click_on_save_result_btn)
 
 
 if __name__ == '__main__':
