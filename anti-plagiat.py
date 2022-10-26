@@ -3,11 +3,13 @@ Main package, which unite all widgets and work with them
 """
 import sys
 from datetime import datetime
-from PyQt5 import uic, QtGui
 
-from custom_widgets import *
-from algo import *
-from antiplagiat_db import *
+from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5 import uic
+
+from custom_widgets import SettingsWidget, HistoryWidget, UserComparisonItem
+from algo import get_diff_percent
+from antiplagiat_db import UserComparisonStorageDB
 
 
 class Antiplagiat(QMainWindow):

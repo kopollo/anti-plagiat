@@ -92,4 +92,4 @@ def get_diff_percent(source_code1, source_code2):
     max_len = max(len(source1_tokens), len(source2_tokens))
     levenstein_dist = levenstein_distance(source1_tokens, source2_tokens)
     diff_per = 100 - (levenstein_dist * 100) / max_len
-    return diff_per
+    return str(diff_per)[:5]

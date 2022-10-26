@@ -9,6 +9,7 @@ class UserComparisonStorageDB:
     """
     class that provides work with database
     """
+
     def __init__(self):
         """
         Initialize UserComparisonStorageDB
@@ -69,9 +70,9 @@ class UserComparisonStorageDB:
         connection = sqlite3.connect(self.dbname)
         cursor = connection.cursor()
         query = '''
-        DELETE FROM comparison 
-        WHERE rowid IN 
-        (Select rowid from comparison limit 1);
+            DELETE FROM comparison
+            WHERE rowid IN
+        (SELECT rowid FROM comparison limit 1);
         '''
         cursor.execute(query)
         connection.commit()

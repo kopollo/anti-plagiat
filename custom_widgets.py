@@ -2,8 +2,11 @@
 file that contains custom widgets
 """
 from PyQt5 import uic
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtWidgets import (
+    QWidget, QPushButton, QPlainTextEdit, QVBoxLayout,
+    QFileDialog, QDialog, QListWidgetItem
+)
+from PyQt5.QtCore import QSize
 
 
 class DisplayTextWidget(QWidget):
@@ -84,7 +87,7 @@ class SettingsWidget(QDialog):
         :param parent: widget that promotes settings
         """
         QDialog.__init__(self, parent=parent)
-        uic.loadUi('style/settings_widget.ui', self)
+        uic.loadUi('style/test_settings_widget.ui', self)
         self.setWindowTitle("Settings")
 
         self.buttonBox.accepted.connect(self.click_accept)
