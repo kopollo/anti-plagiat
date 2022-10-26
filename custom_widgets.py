@@ -1,10 +1,7 @@
 ﻿"""
 file that contains custom widgets
 """
-import csv
-
 from PyQt5 import uic, QtGui, QtWidgets, QtCore
-from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QSize
 
@@ -33,14 +30,14 @@ class DisplayTextWidget(QWidget):
         )
         self.text = self.text_widget.toPlainText()
 
-        self.is_text_changed = True
-
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.open_file_dialog_btn)
         self.layout.addWidget(self.text_widget)
 
     def text_changed(self):
-        self.is_text_changed = True
+        """
+        update attributes when text changed
+        """
         self.text = self.text_widget.toPlainText()
 
     def get_text(self):
@@ -94,12 +91,15 @@ class SettingsWidget(QDialog):
         self.buttonBox.rejected.connect(self.reject)
 
         self.font = SettingsWidget.DEFAULT_FONT
-        self.font_size = SettingsWidget.DEFAULT_FONT
+        self.font_size = SettingsWidget.DEFAULT_FONT_SIZE
         self.theme = SettingsWidget.DEFAULT_THEME
 
         self.init_user_settings()
 
     def init_user_settings(self):
+        """
+        Initialize settings from earlier sessions
+        """
         with open("user_settings_info.txt") as fin:
             lines = fin.readlines()
         lines = tuple([line.strip() for line in lines])
@@ -108,6 +108,9 @@ class SettingsWidget(QDialog):
         self.set_style()
 
     def save_user_settings(self):
+        """
+        saves user settings into file
+        """
         with open("user_settings_info.txt", mode="w") as out:
             print(self.font, file=out)
             print(self.font_size, file=out)
@@ -118,7 +121,11 @@ class SettingsWidget(QDialog):
         changes font, font-size, theme
         """
         self.font = self.font_dialog.currentText()
-        self.font_size = int(self.font_size_spin_box.text())
+        try:
+            self.font_size = int(self.font_size_spin_box.text())
+        except TypeError:
+            # not number
+            pass
         self.theme = self.theme_group.checkedButton().objectName()
 
         self.set_style()
@@ -126,19 +133,32 @@ class SettingsWidget(QDialog):
 
     def set_style(self):
         """
-        sets theme from css file
+        sets theme, font, font size
         """
-        theme_file_name = "style/light_theme.css"
-        if self.theme == "dark":
-            theme_file_name = "style/dark_theme.css"
+        self.parent().setStyleSheet(self.generate_css_for_interface())
 
+        self.save_user_settings()
+
+    def generate_css_for_interface(self):
+        """
+        generates css for font, font size, theme
+        :return: css file
+        """
         font_size = int(self.font_size)
         font = self.font
         font_in_qss = f'font-size: {font_size}px; font-family: {font};'
         cur_font = f"QWidget {{{font_in_qss}}}"
-        self.parent().setStyleSheet(open(theme_file_name).read() + cur_font)
+        return self.theme_file_manager() + cur_font
 
-        self.save_user_settings()
+    def theme_file_manager(self):
+        """
+        choose theme file by theme title
+        :return: css file
+        """
+        theme_file_name = "style/light_theme.css"
+        if self.theme == "dark":
+            theme_file_name = "style/dark_theme.css"
+        return open(theme_file_name).read()
 
 
 class UserComparisonItem(QWidget):
@@ -150,23 +170,28 @@ class UserComparisonItem(QWidget):
     - data & time
     """
 
-    def __init__(self, txt, txt2, percent, datetime,
-                 parent=None):  # сдлать **kwargs
+    def __init__(self,
+                 first_source_code,
+                 second_source_code,
+                 equality_percent,
+                 date_time,
+                 parent=None
+                 ):
         """
         Initialize object with following attributes:
-        :param txt:
-        :param txt2:
-        :param percent:
-        :param datetime:
+        :param first_source_code:
+        :param second_source_code:
+        :param equality_percent:
+        :param date_time:
         :param parent:
         """
         super().__init__(parent)
         uic.loadUi('style/user_comparison_widget.ui', self)
 
-        self.first_source_code.setPlainText(txt)
-        self.second_source_code.setPlainText(txt2)
-        self.equality_percent_label.setText(str(percent))
-        self.date_time_label.setText(datetime)
+        self.first_source_code.setPlainText(first_source_code)
+        self.second_source_code.setPlainText(second_source_code)
+        self.equality_percent_label.setText(str(equality_percent))
+        self.date_time_label.setText(date_time)
 
     def get_comparison_info(self):
         """
@@ -198,26 +223,26 @@ class HistoryWidget(QDialog):
         """
         super().__init__(parent)
         uic.loadUi('style/user_history_widget.ui', self)
-        self.setWindowTitle("User Histore")
-        self.listWidget.itemDoubleClicked.connect(self.reproduce_compare)
+        self.setWindowTitle("User History")
+        self.user_compare_list.itemDoubleClicked.connect(self.reproduce_compare)
 
     def add_item_to_list(self, item: UserComparisonItem):
         """
         appends in list widget item
         :param item: object that we want to add in list
         """
-        list_item = QListWidgetItem(self.listWidget)
+        list_item = QListWidgetItem(self.user_compare_list)
         list_item.setSizeHint(QSize(*HistoryWidget.LIST_ITEM_SIZE))
-        self.listWidget.addItem(list_item)
-        self.listWidget.setItemWidget(list_item, item)
+        self.user_compare_list.addItem(list_item)
+        self.user_compare_list.setItemWidget(list_item, item)
 
     def get_list_item(self):
         """
         allows us to take widget from QListWidget
         :return: widget
         """
-        item = self.listWidget.currentItem()
-        widget = self.listWidget.itemWidget(item)
+        item = self.user_compare_list.currentItem()
+        widget = self.user_compare_list.itemWidget(item)
         return widget
 
     def reproduce_compare(self):
@@ -225,7 +250,6 @@ class HistoryWidget(QDialog):
         transfer source codes from list into main window
         """
         widget = self.get_list_item()
-
         txt1, txt2, percent, datetime = widget.get_comparison_info()
 
         self.parent().first_compared_text.set_text(txt1)

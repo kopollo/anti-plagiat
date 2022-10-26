@@ -37,6 +37,9 @@ class Antiplagiat(QMainWindow):
         self.init_storage_by_db()
 
     def init_storage_by_db(self):
+        """
+        Load user compares from previous sections
+        """
         connection = sqlite3.connect(self.dbname)
         cursor = connection.cursor()
         query = '''
@@ -58,7 +61,6 @@ class Antiplagiat(QMainWindow):
         open a new window with settings dialog
         """
         self.settings_window.exec()
-        # self.settings_window.set_style()
 
     def click_on_compare_btn(self):
         """
@@ -71,6 +73,14 @@ class Antiplagiat(QMainWindow):
         )
         self.result_label.setText(str(diff))
 
+    def generate_formatted_datetime(self):
+        """
+        generates current date time by
+        expression '%Y-%m-%d - %H:%M:%S'
+        :return: string
+        """
+        return datetime.now().strftime('%Y-%m-%d - %H:%M:%S')
+
     def click_on_save_result_btn(self):
         """
         saves current compare attributes
@@ -78,7 +88,7 @@ class Antiplagiat(QMainWindow):
         and user local storage
         """
         percent = self.result_label.text()
-        date = datetime.now().strftime('%Y-%m-%d - %H:%M:%S')
+        date = self.generate_formatted_datetime()
         item = UserComparisonItem(
             self.first_compared_text.get_text(),
             self.second_compared_text.get_text(),
@@ -94,11 +104,9 @@ class Antiplagiat(QMainWindow):
         adds item to database of user compares
         :param item: what we will insert
         """
-        first_sc, second_sc, percent, date_time = item.get_comparison_info()
 
         connection = sqlite3.connect(self.dbname)
         cursor = connection.cursor()
-        print(type(date_time))
         query = '''
         INSERT INTO comparison(
             first_compared_source,
