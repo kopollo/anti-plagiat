@@ -1,3 +1,7 @@
+"""
+package that contains comparing algorithm and
+functions to work with python tokens
+"""
 import token
 import tokenize
 from io import StringIO

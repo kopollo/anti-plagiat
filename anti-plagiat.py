@@ -1,13 +1,13 @@
-import sqlite3
+"""
+Main package, which unite all widgets and work with them
+"""
 import sys
 from datetime import datetime
 from PyQt5 import uic, QtGui
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout,
-)
 
 from custom_widgets import *
 from algo import *
+from antiplagiat_db import *
 
 
 class Antiplagiat(QMainWindow):
@@ -28,27 +28,13 @@ class Antiplagiat(QMainWindow):
         self.compare_text_btn.clicked.connect(self.click_on_compare_btn)
         self.save_result_btn.clicked.connect(self.click_on_save_result_btn)
 
-        self.settings_window = SettingsWidget(self)
+        self.user_forget_label.setHidden(True)
 
+        self.settings_window = SettingsWidget(self)
         self.history = HistoryWidget(self)
 
-        self.dbname = "user_comparison_storage.db"
-
+        self.db_of_compares = UserComparisonStorageDB()
         self.init_storage_by_db()
-
-    def init_storage_by_db(self):
-        """
-        Load user compares from previous sections
-        """
-        connection = sqlite3.connect(self.dbname)
-        cursor = connection.cursor()
-        query = '''
-            SELECT *
-            FROM comparison
-        '''
-        cursor.execute(query)
-        for row in cursor.fetchall():
-            self.history.add_item_to_list(UserComparisonItem(*row[1:]))
 
     def click_on_history_btn(self):
         """
@@ -68,10 +54,25 @@ class Antiplagiat(QMainWindow):
         """
 
         diff = get_diff_percent(
-            self.first_compared_text.text,
-            self.second_compared_text.text
+            self.first_compared_text.get_text(),
+            self.second_compared_text.get_text()
         )
         self.result_label.setText(str(diff))
+
+    def init_storage_by_db(self):
+        """
+        Load user compares from previous sections
+        """
+        for row in self.db_of_compares.get_compare_info():
+            self.history.add_item_to_list(UserComparisonItem(*row[1:]))
+
+    def reload_db(self):
+        """
+        deletes first element in db queue and updates user history widget
+        """
+        self.db_of_compares.delete_first_elem()
+        self.history.clear()
+        self.init_storage_by_db()
 
     def generate_formatted_datetime(self):
         """
@@ -97,28 +98,10 @@ class Antiplagiat(QMainWindow):
             self)
 
         self.history.add_item_to_list(item)
-        self.add_item_to_db(item)
+        self.db_of_compares.add_item_to_db(item)
 
-    def add_item_to_db(self, item: UserComparisonItem):
-        """
-        adds item to database of user compares
-        :param item: what we will insert
-        """
-
-        connection = sqlite3.connect(self.dbname)
-        cursor = connection.cursor()
-        query = '''
-        INSERT INTO comparison(
-            first_compared_source,
-            second_compared_source,
-            similarity_percentage,
-            date_time)
-        VALUES(?,?,?,?)
-        '''
-
-        cursor.execute(query, item.get_comparison_info())
-        connection.commit()
-        connection.close()
+        if self.db_of_compares.is_too_long_queue():
+            self.reload_db()
 
 
 if __name__ == '__main__':

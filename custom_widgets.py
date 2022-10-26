@@ -256,3 +256,6 @@ class HistoryWidget(QDialog):
         self.parent().second_compared_text.set_text(txt2)
 
         self.close()
+
+    def clear(self):
+        self.user_compare_list.clear()
