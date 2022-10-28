@@ -1,29 +1,27 @@
 """
-package that contains database of user comparisons
+package that contains database of user comparisons.
+
 """
 import sqlite3
 from custom_widgets import UserComparisonItem
 
 
 class UserComparisonStorageDB:
-    """
-    class that provides work with database
-    """
+    """class that provides work with database."""
 
     def __init__(self):
-        """
-        Initialize UserComparisonStorageDB
-        """
+        """Initialize UserComparisonStorageDB."""
         self.dbname = "user_comparison_storage.db"
 
     def get_compare_info(self):
         """
-        :return: following attributes
+        Get user compare information from db.
+
+        :return: following attributes from database
         - first source code
         - second source code
         - difference percent
         - data & time
-        from database
         """
         connection = sqlite3.connect(self.dbname)
         cursor = connection.cursor()
@@ -36,7 +34,8 @@ class UserComparisonStorageDB:
 
     def is_too_long_queue(self):
         """
-        checks if we have more than 10 saves
+        Check if we have more than 10 saves.
+
         :return: True if we have, False if not
         """
         if self.get_db_size() > 10:
@@ -45,10 +44,10 @@ class UserComparisonStorageDB:
 
     def add_item_to_db(self, item: UserComparisonItem):
         """
-        adds item to database of user compares
+        Add item to database of user compares.
+
         :param item: what we will insert
         """
-
         connection = sqlite3.connect(self.dbname)
         cursor = connection.cursor()
         query = '''
@@ -64,9 +63,7 @@ class UserComparisonStorageDB:
         connection.close()
 
     def delete_first_elem(self):
-        """
-        Delete first record from db
-        """
+        """Delete first record from db."""
         connection = sqlite3.connect(self.dbname)
         cursor = connection.cursor()
         query = '''
@@ -80,7 +77,8 @@ class UserComparisonStorageDB:
 
     def get_db_size(self):
         """
-        get number of rows in db
+        Get number of rows in db.
+
         :return: db size
         """
         connection = sqlite3.connect(self.dbname)

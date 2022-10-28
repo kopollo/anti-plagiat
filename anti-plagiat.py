@@ -13,14 +13,10 @@ from antiplagiat_db import UserComparisonStorageDB
 
 
 class Antiplagiat(QMainWindow):
-    """
-    Main class that describe Antiplagiat system
-    """
+    """Main class that describe Antiplagiat system."""
 
     def __init__(self):
-        """
-        Initialize main window of Antiplagiat, sets window title
-        """
+        """Initialize main window of Antiplagiat, sets window title."""
         super().__init__()
         uic.loadUi('style/main_widget.ui', self)
         self.setWindowTitle("Antiplagiat")
@@ -41,27 +37,22 @@ class Antiplagiat(QMainWindow):
 
     def show_user_warning(self, ok: bool):
         """
-        shows to user warning, if he forgot to click compare btn
+        Show to user warning, if he forgot to click compare btn.
+
         :param ok: should we hide it or show
         """
         self.user_forget_label.setHidden(not ok)
 
     def click_on_history_btn(self):
-        """
-        open a new window with history of requests
-        """
+        """Open a new window with history of requests."""
         self.history.exec()
 
     def click_on_settings_btn(self):
-        """
-        open a new window with settings dialog
-        """
+        """Open a new window with settings dialog."""
         self.settings_window.exec()
 
     def click_on_compare_btn(self):
-        """
-        call a compare function for source codes after click
-        """
+        """Call a compare function for source codes after click."""
         self.show_user_warning(False)
         self.user_click_manager(self.click_on_compare_btn)
 
@@ -72,31 +63,28 @@ class Antiplagiat(QMainWindow):
         self.result_label.setText(str(diff))
 
     def init_storage_by_db(self):
-        """
-        Load user compares from previous sections
-        """
+        """Load user compares from previous sections."""
         for row in self.db_of_compares.get_compare_info():
             self.history.add_item_to_list(UserComparisonItem(*row[1:]))
 
     def reload_db(self):
-        """
-        deletes first element in db queue and updates user history widget
-        """
+        """Delete first element in db queue and updates user history widget."""
         self.db_of_compares.delete_first_elem()
         self.history.clear()
         self.init_storage_by_db()
 
     def generate_formatted_datetime(self):
         """
-        generates current date time by
-        expression '%Y-%m-%d - %H:%M:%S'
+        Generate current date time in format '%Y-%m-%d - %H:%M:%S'.
+
         :return: string
         """
         return datetime.now().strftime('%Y-%m-%d - %H:%M:%S')
 
     def user_click_manager(self, func_of_click):
         """
-        implements a simple logger to control user
+        Implement a simple logger to control user.
+
         :param func_of_click: function what was clicked
         """
         if func_of_click == self.click_on_compare_btn:
@@ -108,9 +96,10 @@ class Antiplagiat(QMainWindow):
 
     def click_on_save_result_btn(self):
         """
-        saves current compare attributes
+        Save current compare attributes
         (source codes, equality percent, request time) to database
-        and user local storage
+        and user local storage.
+
         """
 
         if not self.was_compare_btn_clicked:

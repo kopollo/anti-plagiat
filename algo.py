@@ -1,6 +1,7 @@
 """
 package that contains comparing algorithm and
-functions to work with python tokens
+functions to work with python tokens.
+
 """
 import token
 import tokenize
@@ -9,7 +10,8 @@ from io import StringIO
 
 def levenstein_distance(first_sequence, second_sequence):
     """
-    finds levenshtein distance of two texts
+    Find levenshtein distance of two texts.
+
     :param first_sequence: first text
     :param second_sequence: second text
     :return: levenshtein distance
@@ -36,7 +38,8 @@ def levenstein_distance(first_sequence, second_sequence):
 
 def get_tokens(source_code):
     """
-    generates tokens based on source code
+    Generate tokens based on source code.
+
     :param source_code: code of program
     :return: list of tokens in numeric view
     """
@@ -54,8 +57,9 @@ def get_tokens(source_code):
 
 def print_tokens_info(source_code):
     """
-    print in a formatted way token id, toked name title and
-    the object that called this token
+    Print in a formatted way token id, toked name title and
+    the object that called this token.
+
     :param source_code: source where we want to get tokens info
     """
     lines = source_code.strip()
@@ -69,7 +73,8 @@ def print_tokens_info(source_code):
 
 def tokens_filer(tokens):
     """
-    delete from list COMMENT and NEW LINE tokens
+    Delete from list COMMENT and NEW LINE tokens.
+
     :param tokens: list of tokens
     :return: list without COMMENT and NEW LINE tokens
     """
@@ -80,8 +85,9 @@ def tokens_filer(tokens):
 
 def get_diff_percent(source_code1, source_code2):
     """
-    function gets two source codes and calculate difference percent
-    by this formula (100 - (levenstein_dist * 100) / max_len)
+    Get two source codes and calculate difference percent
+    by this formula (100 - (levenstein_dist * 100) / max_len).
+
     :param source_code1: first source code
     :param source_code2: second source code
     :return: difference percent%
