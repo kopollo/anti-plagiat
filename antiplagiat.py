@@ -1,10 +1,7 @@
-"""
-Main package, which unite all widgets and work with them
-"""
-import sys
+"""Main package, that creates main window with all logic."""
 from datetime import datetime
 
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import uic
 
 from custom_widgets import SettingsWidget, HistoryWidget, UserComparisonItem
@@ -99,9 +96,7 @@ class Antiplagiat(QMainWindow):
         Save current compare attributes
         (source codes, equality percent, request time) to database
         and user local storage.
-
         """
-
         if not self.was_compare_btn_clicked:
             self.show_user_warning(True)
             return False
@@ -122,10 +117,3 @@ class Antiplagiat(QMainWindow):
             self.reload_db()
 
         self.user_click_manager(self.click_on_save_result_btn)
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    antiplagiat = Antiplagiat()
-    antiplagiat.show()
-    sys.exit(app.exec())

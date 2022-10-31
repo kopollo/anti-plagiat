@@ -1,7 +1,4 @@
-"""
-package that contains database of user comparisons.
-
-"""
+"""package that contains database of user comparisons."""
 import sqlite3
 from custom_widgets import UserComparisonItem
 

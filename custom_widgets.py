@@ -51,7 +51,8 @@ class DisplayTextWidget(QWidget):
         try:
             file = QFileDialog.getOpenFileName(self, 'Open file')
             file_path, file_type = file
-            text = open(file_path).read()
+            with open(file_path, encoding="utf8") as fin:
+                text = fin.read()
             self.text_widget.setPlainText(text)
             self.text = self.text_widget.toPlainText()
         except FileNotFoundError:
@@ -61,7 +62,7 @@ class DisplayTextWidget(QWidget):
 
 class SettingsWidget(QDialog):
     """
-    Widget that provides settings options
+    Widget that provides settings options:
     - font
     - font size
     - theme
