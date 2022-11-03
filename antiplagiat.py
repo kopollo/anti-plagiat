@@ -34,7 +34,7 @@ class Antiplagiat(QMainWindow):
 
     def show_user_warning(self, ok: bool):
         """
-        Show to user warning, if he forgot to click compare btn.
+        Show warning, if user forgot to click compare btn.
 
         :param ok: should we hide it or show
         """

@@ -100,6 +100,13 @@ class SettingsWidget(QDialog):
         self.font, self.font_size, self.theme = lines
         self.set_style()
 
+        self.font_dialog.setEditText(self.font)
+        self.font_size_spin_box.setValue(int(self.font_size))
+        if self.theme == 'dark':
+            self.dark.setChecked(True)
+        elif self.theme == 'light':
+            self.light.setChecked(True)
+
     def save_user_settings(self):
         """Save user settings into file."""
         with open("user_settings_info.txt", mode="w") as out:
