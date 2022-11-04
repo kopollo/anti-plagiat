@@ -21,6 +21,8 @@ Check similarity of python source codes with convenient user interface
 ## Codestyle linters and test frameworks
 The project has been checked and tested with the following tools:
 - flake8
+- mypy
+- pydocstyle
 - pytest
 
 
@@ -28,11 +30,10 @@ The project has been checked and tested with the following tools:
  - To compare add two source codes(by file or write it by hand), then click 'compare' and you will see result.
  If you want to save compare, you need also to click 'save result'
  
- ![image](https://user-images.githubusercontent.com/114457052/198499426-8d5f0c17-e809-4844-a11d-13efd4e04d24.png)
- 
+![test_compare](https://user-images.githubusercontent.com/114457052/199977189-55faca6e-993e-4029-9ae9-1c6744d755af.gif) 
  - If you want a custom appearance click on 'settings' button and choose whatever you like
  
- ![image](https://user-images.githubusercontent.com/114457052/198500208-d891df4a-3b5d-4e74-8983-e54347bef081.png)
+![test_settings2](https://user-images.githubusercontent.com/114457052/199976717-75d0bf29-4eb2-4b60-ab06-c1bf47b854c6.gif)
  
  - To reproduce compare click on 'History' button, then by double click you can upload compare!
  
