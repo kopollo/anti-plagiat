@@ -58,6 +58,8 @@ class DisplayTextWidget(QWidget):
         except FileNotFoundError:
             # maybe should save that info
             pass
+        except ValueError:
+            pass
 
 
 class SettingsWidget(QDialog):
@@ -84,7 +86,6 @@ class SettingsWidget(QDialog):
 
         self.buttonBox.accepted.connect(self.click_accept)
         self.buttonBox.rejected.connect(self.reject)
-
         self.font = SettingsWidget.DEFAULT_FONT
         self.font_size = SettingsWidget.DEFAULT_FONT_SIZE
         self.theme = SettingsWidget.DEFAULT_THEME
@@ -96,16 +97,22 @@ class SettingsWidget(QDialog):
         with open("user_settings_info.txt") as fin:
             lines = fin.readlines()
         lines = tuple([line.strip() for line in lines])
-
         self.font, self.font_size, self.theme = lines
-        self.set_style()
+
+        try:
+            self.font_size = int(self.font_size)
+        except ValueError:
+            self.font_size = self.DEFAULT_FONT_SIZE
 
         self.font_dialog.setEditText(self.font)
-        self.font_size_spin_box.setValue(int(self.font_size))
+        self.font_size_spin_box.setValue(self.font_size)
+
         if self.theme == 'dark':
             self.dark.setChecked(True)
         elif self.theme == 'light':
             self.light.setChecked(True)
+
+        self.set_style()
 
     def save_user_settings(self):
         """Save user settings into file."""
@@ -117,12 +124,11 @@ class SettingsWidget(QDialog):
     def click_accept(self):
         """Change font, font-size, theme."""
         self.font = self.font_dialog.currentText()
+        self.theme = self.theme_group.checkedButton().objectName()
         try:
             self.font_size = int(self.font_size_spin_box.text())
-        except TypeError:
-            # not number
-            pass
-        self.theme = self.theme_group.checkedButton().objectName()
+        except ValueError:
+            self.font_size = self.DEFAULT_FONT_SIZE
 
         self.set_style()
         self.close()
